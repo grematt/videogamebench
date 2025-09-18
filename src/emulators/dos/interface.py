@@ -191,6 +191,7 @@ class DOSGameInterface(VideoGameBenchInterface):
 
         except Exception as e:
             error_msg = f"Error executing action: {str(e)}"
+            exit()
             
             if self.lite:
                 await self.browser.press_key("Alt+Pause", delay_ms=0)

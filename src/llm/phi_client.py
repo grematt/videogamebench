@@ -92,36 +92,29 @@ class PhiClient(LLMClient):
             images
         ).to(self.device)
 
-        try:
-            self.processor.tokenizer.eos_token = "<|end|>"
-            self.processor.tokenizer.pad_token = "<|end|>"
-            self.model_ref.config.eos_token_id = self.processor.tokenizer.convert_tokens_to_ids("<|end|>")
-            self.model_ref.config.pad_token_id = self.model_ref.config.eos_token_id
+        self.processor.tokenizer.eos_token = "<|end|>"
+        self.processor.tokenizer.pad_token = "<|end|>"
+        self.model_ref.config.eos_token_id = self.processor.tokenizer.convert_tokens_to_ids("<|end|>")
+        self.model_ref.config.pad_token_id = self.model_ref.config.eos_token_id
 
-            print('after')
+        print('after')
 
-            with torch.inference_mode():
-                # Using KV Cache for generation
-                output = self.model_ref.generate(
-                    **inputs,
-                    max_new_tokens = 200,
-                    # eos_token_id = self.model_ref.config.eos_token_id,
-                    # pad_token_id = self.model_ref.config.eos_token_id,
-                )
+        with torch.inference_mode():
+            # Using KV Cache for generation
+            output = self.model_ref.generate(
+                **inputs,
+                max_new_tokens = 200,
+                # eos_token_id = self.model_ref.config.eos_token_id,
+                # pad_token_id = self.model_ref.config.eos_token_id,
+            )
 
-            print('after 2')
+        print('after 2')
 
-            output = output[:, inputs["input_ids"].shape[1] :]
-            clean_ids = output.masked_fill(output == -1, self.processor.tokenizer.eos_token_id)
-            
-            response = self.processor.tokenizer.decode(clean_ids[0], skip_special_tokens = True)
+        output = output[:, inputs["input_ids"].shape[1] :]
+        clean_ids = output.masked_fill(output == -1, self.processor.tokenizer.eos_token_id)
+        
+        response = self.processor.tokenizer.decode(clean_ids[0], skip_special_tokens = True)
 
-            print('response')
-            print(response)
-            exit()
-        except Exception as e:
-            print(str(e))
-            exit()
         return response
 
     def preprocess(self, example):
@@ -296,19 +289,17 @@ class PhiClient(LLMClient):
         try:
             start_time = time.time()
 
-            response = self.run_inference(image_data, messages)
+            #response = self.run_inference(image_data, messages)
+            response_text = self.run_inference(image_data, messages)
             response_time = time.time() - start_time
-            
             
             # Log cost information
             self.file_logger.info(f"Request cost: ${0.0:.4f}")
             self.file_logger.info(f"Total cost so far: ${0.0:.2f}")
             logger.info(f"Total cost so far: ${0.0:.2f}")
             
-            print(response)
-            
             # Extract response text
-            response_text = response.choices[0].message.content
+            # response_text = response.choices[0].message.content
             
             # Log response details
             self.file_logger.info(f"Response time: {response_time:.2f}s")
@@ -347,6 +338,7 @@ class PhiClient(LLMClient):
         self.file_logger.info(f"Step {self.step_count} - Generating ReACT response")
         self.file_logger.info(f"Task: {task}")
         
+        time.sleep(5)
         
         # Create the user message with the task
         user_message = {

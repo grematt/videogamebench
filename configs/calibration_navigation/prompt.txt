@@ -19,3 +19,5 @@ Controls:
 - If you get stuck, you may need to restart the stage
 
 Your goal is to complete all 10 stages by carefully navigating through each maze. Plan your route to avoid walls and find the optimal path from start to finish.
+
+The only possible action type you can select here is press_key, with the keys ArrowUp, ArrowRight, ArrowLeft, and ArrowDown as valid inputs.
