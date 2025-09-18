@@ -2,6 +2,8 @@
 from src.consts import GBA_KEYS
 from typing import List, Tuple
 import re
+from src.llm.phi_client import PhiClient
+from src.llm.llm_client import LLMClient
 
 def convert_to_dict(
         actions: List[str | Tuple[str, ...]], 
@@ -65,3 +67,22 @@ def convert_from_dict(button_states: List[dict]) -> List[str]:
         List of button names that are active (True)
     """
     return [key for key, value in button_states.items() if value]
+
+def get_client(model, api_key, temperature, max_tokens, log_dir, api_base):
+    if 'phi' in model:
+        return PhiClient(
+            model=model,
+            api_key=api_key,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            log_dir=log_dir,
+            api_base=api_base
+        )
+    return LLMClient(
+        model=model,
+        api_key=api_key,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        log_dir=log_dir,
+        api_base=api_base
+    )

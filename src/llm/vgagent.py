@@ -15,7 +15,7 @@ from src.utils import is_same_image
 from src.emulators.dos.browser_controller import BrowserController
 from src.llm.llm_client import LLMClient
 from src.llm.prompts import SYSTEM_PROMPTS, TASK_PROMPTS, GBA_PROMPT, REFLECTION_PROMPT, GBA_REALTIME_PROMPT
-from src.llm.utils import parse_actions_response, convert_to_dict
+from src.llm.utils import parse_actions_response, convert_to_dict, get_client
 
 # Configure logging
 logging.basicConfig(
@@ -23,6 +23,8 @@ logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 logger = logging.getLogger(__name__)
+
+
 
 class Message:
     """Container for a message in the conversation history."""
@@ -71,7 +73,16 @@ class VideoGameBenchAgent:
         self.file_logger.info(f"Initializing {self.__class__.__name__} with model: {model}")
 
         # Initialize LLM client
-        self.llm_client = LLMClient(
+        # self.llm_client = LLMClient(
+        #     model=model,
+        #     api_key=api_key,
+        #     temperature=temperature,
+        #     max_tokens=max_tokens,
+        #     log_dir=self.log_dir / "llm",
+        #     api_base=api_base
+        # )
+        
+        self.llm_client = get_client(
             model=model,
             api_key=api_key,
             temperature=temperature,

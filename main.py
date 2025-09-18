@@ -190,6 +190,8 @@ async def videogamebench_start():
         args.model = "gemini/gemini-2.0-flash"
     elif args.model == "llama4":
         args.model = "together_ai/meta-llama/Llama-4-Maverick-17B-128E-Instruct-FP8"
+    elif args.model == 'phi3.5':
+        args.model = 'microsoft/phi-3.5-vision-instruct'
 
     if args.emulator == "dos":
         from src.run_vgbench_dos import run_dos_emulator
